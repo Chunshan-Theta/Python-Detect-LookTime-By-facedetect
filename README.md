@@ -6,4 +6,4 @@
 
 ps.ByPic : 
 1. source pic input "insertpic" file  
-2. 2. 1s to 10 pictures
+2. 1s to 10 pictures
