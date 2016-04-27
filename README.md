@@ -4,4 +4,6 @@
 2.run Maindetect.py would start face detect program	    
 3.run analysis.py and select day then would show result	    
 
-ps.ByPicture : 1s to 10 pictures
+ps.ByPic : 
+1. source pic input "insertpic" file  
+2. 2. 1s to 10 pictures
