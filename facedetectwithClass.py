@@ -1,16 +1,17 @@
-#!/usr/bin/env python
+#!/usr/bin/env python 2.7
 
 import numpy as np
-import cv2
+import cv2 #2.4.10
 import cv2.cv as cv
 from video import create_capture
 from common import clock, draw_str
+import datetime as dt
 
 help_message = '''
 USAGE: facedetect.py [--cascade <cascade_fn>] [--nested-cascade <cascade_fn>] [<video_source>]
 '''
 class PicData:
-	def __init__(self,pic,cascade):		
+	def __init__(self,pic,cascade,PostDataOn):		
 		gray = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
 		gray = cv2.equalizeHist(gray)
 		self.SourcePic = pic
@@ -19,7 +20,12 @@ class PicData:
 		self.rects = self.detect(self.GrayPic, self.Cascade)
 		self.DrawPic=self.draw_rects(self.SourcePic,self.rects, (0, 255, 0))
 		self.PeopleNum = len(self.rects)
-	
+		self.RightNow = str(dt.datetime.now())
+		self.RightNowShame = str(self.RightNow[:4]+self.RightNow[5:7]+self.RightNow[8:10]+self.RightNow[11:13]+self.RightNow[14:16]+self.RightNow[17:19])		
+		if PostDataOn:
+			self.PostData()
+
+
 	def detect(self,img, cascade):
 		rects = cascade.detectMultiScale(img, scaleFactor=1.3, minNeighbors=4, minSize=(30, 30), flags = cv.CV_HAAR_SCALE_IMAGE)
 		if len(rects) == 0:
@@ -32,6 +38,10 @@ class PicData:
 		    cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
 		return img
 
+	def PostData(self):
+		import requests as rq
+		r = rq.post("http://IP/pi/SQLAPI.php",data={"action":"InsertSql","PeopleNum":self.PeopleNum,"Time":self.RightNowShame})
+		print r.status_code,r.reason
 if __name__ == '__main__':
     import sys, getopt
     print help_message
@@ -49,11 +59,12 @@ if __name__ == '__main__':
     while True:
 		ret, img = cam.read()
 
-		vis = PicData(img,cascade)
+		vis = PicData(img,cascade,True)
 		#print type(img)
 		#print type(vis)
 		cv2.imshow('facedetect', vis.DrawPic)
 		print vis.PeopleNum
 		if 0xFF & cv2.waitKey(5) == 27:
+			PostData()
 			break
     cv2.destroyAllWindows()
