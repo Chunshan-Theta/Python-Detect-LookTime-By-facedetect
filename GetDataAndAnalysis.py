@@ -49,7 +49,7 @@ class JsonAnalysis:
 
 
 
-r = rq.post("http://140.130.36.221/pi/SQLAPI.php",data={"action":"SearchSql","StartTime":"20160910000000","EndTime":"20160920000000"})
+r = rq.post("http://IP/pi/SQLAPI.php",data={"action":"SearchSql","StartTime":"20160910000000","EndTime":"20160920000000"})
 print r.status_code,r.reason
 Data = json.loads(r.text)
 print  type (Data)
