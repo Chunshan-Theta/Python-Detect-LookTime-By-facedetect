@@ -4,7 +4,7 @@ import math
 import datetime as DT
 
 
-
+HostIP = ""
 class JsonAnalysis:
     def __init__(self,Json):
         self.Json = Json
@@ -49,7 +49,7 @@ class JsonAnalysis:
 
 
 
-r = rq.post("http://IP/pi/SQLAPI.php",data={"action":"SearchSql","StartTime":"20160910000000","EndTime":"20160920000000"})
+r = rq.post("http://"+HostIP+"/pi/SQLAPI.php",data={"action":"SearchSql","StartTime":"20160910000000","EndTime":"20160920000000"})
 print r.status_code,r.reason
 Data = json.loads(r.text)
 print  type (Data)
