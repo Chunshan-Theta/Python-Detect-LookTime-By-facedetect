@@ -7,9 +7,8 @@ from video import create_capture
 from common import clock, draw_str
 import datetime as dt
 
-help_message = '''
-USAGE: facedetect.py [--cascade <cascade_fn>] [--nested-cascade <cascade_fn>] [<video_source>]
-'''
+help_message = ''' start '''
+HostIP=""
 class PicData:
 	def __init__(self,pic,cascade,PostDataOn):		
 		gray = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
@@ -40,7 +39,7 @@ class PicData:
 
 	def PostData(self):
 		import requests as rq
-		r = rq.post("http://IP/pi/SQLAPI.php",data={"action":"InsertSql","PeopleNum":self.PeopleNum,"Time":self.RightNowShame})
+		r = rq.post("http://"+HostIP+"/pi/SQLAPI.php",data={"action":"InsertSql","PeopleNum":self.PeopleNum,"Time":self.RightNowShame})
 		print r.status_code,r.reason
 if __name__ == '__main__':
     import sys, getopt
