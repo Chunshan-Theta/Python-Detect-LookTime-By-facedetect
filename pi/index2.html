@@ -1,0 +1,312 @@
+<!DOCTYPE HTML>
+
+<!--
+	Prologue by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Prologue by HTML5 UP</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		
+		
+	  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	  <link rel="stylesheet" href="/resources/demos/style.css">
+	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	  <script>
+			$( function() {
+				$( "#datepicker_Start" ).datepicker();
+				$( "#datepicker_Start" ).datepicker( "option", "dateFormat", "yy-mm-dd" );		
+				$( "#datepicker_End" ).datepicker();
+				$( "#datepicker_End" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+				
+				 var tooltips = $( "[title]" ).tooltip({
+					  position: {
+						my: "left top",
+						at: "right+5 top-5",
+						collision: "none"
+				  }
+			});
+				
+			 } );
+	  </script>
+		  
+	  <script>
+		   
+		  $(document).ready(function(){
+			$("button").click(function(){
+				var a = "SQLAPIForIndex.php?";
+				a+="StartDate="+document.getElementById('datepicker_Start').value;
+				a+="&EndDate="+document.getElementById('datepicker_End').value;
+				a+="&StartTime="+document.getElementById('StartTime').value;//+"&EndTime="document.getElementById('EndTime').value;
+				a+="&EndTime="+document.getElementById('EndTime').value;
+				
+				//alert(a);
+				$.ajax({url: a, 
+					success: function(result){
+						
+						if(result=="not Found"){
+							alert("not Found");
+						}
+						else{
+							var contact = JSON.parse(result);
+							var content = "計算結果<br>";
+							content += "開始時間: "+contact.StartTime+"<br>";
+							content += "結束時間: "+contact.EndTime+"<br>";
+							content += "預估人數: "+contact.PeopleNum+"<br>";
+							content += "總臉數: "+contact.SumFace+"<br>";
+							content += "總注視時間: "+contact.SumAttention+"<br>";
+							content += "平均注視時間: "+contact.AverageAttention+"<br>";
+						
+							$("#div1").html(content);
+							DrawFlot(contact.FPeopleStream);
+						}
+
+					},
+					error:function(xhr, ajaxOptions, thrownError){ 
+							alert(xhr.status); 
+							alert(thrownError);  
+							$("#div1").html(xhr.status+","+thrownError);
+					}
+				
+				});
+				
+			});
+		  });
+		</script>
+
+		<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
+
+		<script src="http://static.pureexample.com/js/flot/excanvas.min.js"></script>
+		<script src="http://static.pureexample.com/js/flot/jquery.flot.min.js"></script>
+
+		<!-- CSS -->
+		<style type="text/css">
+
+		</style>
+
+		<!-- Javascript -->
+		<script type="text/javascript">
+		function DrawFlot(stream) {
+			
+				
+		/*     var data1 = [
+				[1, 1], [2, 0], [3, 1],
+				[4, 1], [5, 1], [6, 1],
+				[7, 1], [8, 1], [9, 1],
+				[10, 1], [11, 0], [12, 1],
+				[13, 1], [14, 1], [15, 0]
+			] */;
+			var data1 = new Array();
+			for(i=0;i<stream.length-1;i++){
+				data1.push([i,stream[i]]);
+			}
+			
+			//alert(data1);
+			var data = [{
+				//label: "人數",
+				data: data1,
+				lines: {
+					show: true
+				},
+				points:{
+					show:true
+				}
+			}];
+
+			var options = {
+					xaxis: {
+						mode: "time"
+					},
+					grid:{
+						backgroundColor: { colors: ["#969696", "#5C5C5C"] }
+					}
+			};
+
+			var plot = $.plot($("#example-section25 #flotcontainer"), data, options);  
+		};
+		</script>
+	</head>
+	<body>
+
+		<!-- Header -->
+			<div id="header">
+
+				<div class="top">
+
+					<!-- Logo -->
+						<div id="logo">
+							<span class="image avatar48"><img src="images/avatar.jpg" alt="" /></span>
+							<h1 id="title">Name</h1>
+							<p>Engineer</p>
+						</div>
+
+					<!-- Nav -->
+						<nav id="nav">
+							<!--
+
+								Prologue's nav expects links in one of two formats:
+
+								1. Hash link (scrolls to a different section within the page)
+
+								   <li><a href="#foobar" id="foobar-link" class="icon fa-whatever-icon-you-want skel-layers-ignoreHref"><span class="label">Foobar</span></a></li>
+
+								2. Standard link (sends the user to another page/site)
+
+								   <li><a href="http://foobar.tld" id="foobar-link" class="icon fa-whatever-icon-you-want"><span class="label">Foobar</span></a></li>
+
+							-->
+							<ul>
+								<li><a href="#top" id="top-link" class="skel-layers-ignoreHref"><span class="icon fa-home">Intro</span></a></li>
+								<!--<li><a href="#portfolio" id="portfolio-link" class="skel-layers-ignoreHref"><span class="icon fa-th">Portfolio</span></a></li>-->
+								<li><a href="#request" id="request-link" class="skel-layers-ignoreHref"><span class="icon fa-th">request</span></a></li>
+								<li><a href="#computer" id="computer-link" class="skel-layers-ignoreHref"><span class="icon fa-cogs">computer</span></a></li>
+							</ul>
+						</nav>
+
+				</div>
+
+				<div class="bottom">
+
+					<!-- Social Icons -->
+						<ul class="icons">
+							<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+							<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+							<li><a href="#" class="icon fa-github"><span class="label">Github</span></a></li>
+							<li><a href="#" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li>
+							<li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
+						</ul>
+
+				</div>
+
+			</div>
+
+		<!-- Main -->
+			<div id="main">
+
+				<!-- Intro -->
+					<section id="top" class="one dark cover">
+						<div class="container">
+
+							<header>
+								<h2 class="alt">Hi! I'm <strong>Coder</strong>........</p>
+							</header>
+
+							<footer>
+								<a href="#request" class="button scrolly">Quick Start</a>
+							</footer>
+
+						</div>
+					</section>
+
+				
+
+				<!-- About Me -->
+					<section id="request" class="two">
+						<div class="container">
+
+							<header>
+								<h2>request</h2>
+							</header>
+
+							<!--<a href="#" class="image featured"><img src="images/pic08.jpg" alt="" /></a>-->
+
+							<div id="div1"><h2>Enter condition</h2></div>
+							
+
+							<p>Start Date: <input type="text" id="datepicker_Start" name="StartDate"  size="30">
+							<label for="Time">Time</label>
+							<input id="StartTime" name="StartTime" title="Format: 00:00:00">
+							</p>
+
+							<p>End Date: <input type="text" id="datepicker_End" name="EndDate" size="30">
+							<label for="lastname">Time</label>
+							<input id="EndTime" name="EndTime" title="Format: 00:00:00">
+							</p>
+							<button style="margin-top:20px;margin-bottom:20px;">confirm</button></br>
+							<!-- HTML -->
+							<div id="example-section25">
+								<div id="flotcontainer" style="width: 600px;height:200px;margin: 0px auto;">
+								</div>
+							</div>
+
+						</div>
+					</section>
+
+				<!-- Contact -->
+					<!-- 
+					<section id="contact" class="four">
+						<div class="container">
+
+							<header>
+								<h2>Contact</h2>
+							</header>
+
+							<p>Elementum sem parturient nulla quam placerat viverra
+							mauris non cum elit tempus ullamcorper dolor. Libero rutrum ut lacinia
+							donec curae mus. Eleifend id porttitor ac ultricies lobortis sem nunc
+							orci ridiculus faucibus a consectetur. Porttitor curae mauris urna mi dolor.</p>
+
+							<form method="post" action="#">
+								<div class="row">
+									<div class="6u 12u$(mobile)"><input type="text" name="name" placeholder="Name" /></div>
+									<div class="6u$ 12u$(mobile)"><input type="text" name="email" placeholder="Email" /></div>
+									<div class="12u$">
+										<textarea name="message" placeholder="Message"></textarea>
+									</div>
+									<div class="12u$">
+										<input type="submit" value="Send Message" />
+									</div>
+								</div>
+							</form>
+
+						</div>
+					</section> 
+					-->
+					<section id="computer" class="three">
+						<div class="container">
+
+							<header>
+								<h2>computer</h2>
+							</header>
+							<p>
+							開始時間: 限定時間內第一張照片的時間<br>
+							結束時間: 限定時間內最後一張照片的時間<br>
+							總時間: 開始時間與結束時間的差，單位為秒<br>
+							預估人數: 利用人員增減計算人數量<br>
+							總臉數: 每張照片內含人臉樹的總和<br>
+							總注視時間:所有人注視時間的總和(總臉數*總時間/總照片張數)<br>
+							平均注視時間: 平均每個人注視的時間(總注視時間/預估人數)<br>
+							</p>
+							
+
+						</div>
+					</section> 
+			</div>
+
+		<!-- Footer -->
+			<div id="footer">
+
+				<!-- Copyright -->
+					<ul class="copyright">
+						<li>&copy; Untitled. All rights reserved.</li>
+					</ul>
+
+			</div>
+
+		<!-- Scripts -->
+			<!--<script src="assets/js/jquery.min.js"></script>-->
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/jquery.scrollzer.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
