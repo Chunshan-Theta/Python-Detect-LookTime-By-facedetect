@@ -1,5 +1,5 @@
 #!/usr/bin/env python 2.7
-
+import time
 import numpy as np
 import cv2 #2.4.10
 import cv2.cv as cv
@@ -7,10 +7,15 @@ from video import create_capture
 from common import clock, draw_str
 import datetime as dt
 
-help_message = ''' start '''
-HostIP=""
+import config as cf
+
+help_message = cf.help_message
+HostIP=cf.HostIP
+PostDataOn=cf.PostDataOn
+WaitSec = cf.WaitSec
+
 class PicData:
-	def __init__(self,pic,cascade,PostDataOn):		
+	def __init__(self,pic,cascade,PostOn):		
 		gray = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
 		gray = cv2.equalizeHist(gray)
 		self.SourcePic = pic
@@ -21,7 +26,7 @@ class PicData:
 		self.PeopleNum = len(self.rects)
 		self.RightNow = str(dt.datetime.now())
 		self.RightNowShame = str(self.RightNow[:4]+self.RightNow[5:7]+self.RightNow[8:10]+self.RightNow[11:13]+self.RightNow[14:16]+self.RightNow[17:19])		
-		if PostDataOn:
+		if PostOn:
 			self.PostData()
 
 
@@ -42,23 +47,23 @@ class PicData:
 		r = rq.post("http://"+HostIP+"/pi/SQLAPI.php",data={"action":"InsertSql","PeopleNum":self.PeopleNum,"Time":self.RightNowShame})
 		print r.status_code,r.reason
 if __name__ == '__main__':
-    import sys, getopt
-    print help_message
 
-    args, video_src = getopt.getopt(sys.argv[1:], '', ['cascade=', 'nested-cascade='])
-    try: video_src = video_src[0]
-    except: video_src = 0
-    args = dict(args)
-    cascade_fn = args.get('--cascade', "./haarcascade_frontalface_alt.xml")
+	import sys, getopt
+	print help_message
 
-    cascade = cv2.CascadeClassifier(cascade_fn)
+	args, video_src = getopt.getopt(sys.argv[1:], '', ['cascade=', 'nested-cascade='])
+	try: video_src = video_src[0]
+	except: video_src = 0
+	args = dict(args)
+	cascade_fn = args.get('--cascade', "./haarcascade_frontalface_alt.xml")
 
-    cam = create_capture(video_src, fallback='synth:bg=../cpp/lena.jpg:noise=0.05')
+	cascade = cv2.CascadeClassifier(cascade_fn)
 
-    while True:
+	cam = create_capture(video_src, fallback='synth:bg=../cpp/lena.jpg:noise=0.05')
+
+	while True:
 		ret, img = cam.read()
-
-		vis = PicData(img,cascade,True)
+		vis = PicData(img,cascade,PostDataOn)
 		#print type(img)
 		#print type(vis)
 		cv2.imshow('facedetect', vis.DrawPic)
@@ -66,4 +71,5 @@ if __name__ == '__main__':
 		if 0xFF & cv2.waitKey(5) == 27:
 			PostData()
 			break
-    cv2.destroyAllWindows()
+		time.sleep(WaitSec)
+	cv2.destroyAllWindows()
