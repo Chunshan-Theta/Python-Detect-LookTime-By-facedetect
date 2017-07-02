@@ -38,7 +38,9 @@ function Insert_mysqlQuery($sql) {
 	$dsn = 'mysql:dbname='.$dbname.';host='.$hostIP;
 	try {
 		$dbh = new PDO($dsn, $user, $password);
-		$dbh->query($sql);	
+		$dbh->query($sql);
+		//$dbh->query($sql);
+                //echo $dbh->errorCode();
 	} catch (PDOException $e) {
 		echo 'Connection failed: '.$e->getMessage();
 	}
@@ -57,7 +59,9 @@ function Search_mysqlQuery($sql) {
     $result = null;
 	try {
 		$dbh = new PDO($dsn, $user, $password);
-		$result = $dbh->query($sql)->fetchAll(PDO::FETCH_OBJ);	
+		$result = $dbh->query($sql)->fetchAll(PDO::FETCH_OBJ);
+		//$dbh->query($sql);
+                //echo $dbh->errorCode();
 	} catch (PDOException $e) {
 		echo 'Connection failed: '.$e->getMessage();
 	}
